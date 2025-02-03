@@ -3,28 +3,26 @@ require("express-async-errors");
 
 const express = require("express");
 const app = express();
-const userRoutes = require('./routes/userRoutes');
 const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
-const rateLimiter = require("express-rate-limit");
 
+const userRoutes = require('./routes/userRoutes');
+const recommendRoutes = require("./routes/bestPractices.js");
+const emissionRouter = require("./routes/emission.js");
 
 const connectDb = require("./db/connect");
 
-
-app.set("trust proxy", 1);
-app.use(
-  rateLimiter({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-  })
-);
-app.use(express.json());
 app.use(helmet());
 app.use(cors());
 app.use(xss());
-app.use('/api/users', userRoutes);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+app.use("/api/v1/emission", emissionRouter);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/recommendation',recommendRoutes);
 
 const port = process.env.PORT || 3000;
 

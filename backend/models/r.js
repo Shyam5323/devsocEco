@@ -1,4 +1,5 @@
-import mongoose from "mongoose"; // ✅ Correct for ESM
+const mongoose = require("mongoose");
+
 
 const recommendationSchema = new mongoose.Schema({
   user_id: {
@@ -52,4 +53,4 @@ const recommendationSchema = new mongoose.Schema({
 
 const Recommendation = mongoose.model("Recommendation", recommendationSchema);
 
-export default Recommendation;
+module.exports = Recommendation;

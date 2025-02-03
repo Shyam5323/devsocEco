@@ -8,7 +8,7 @@ const calculateDailyEmissions = (inputs, user_id) => {
   const emissions = [];
 
   // Transport Emissions (daily)
-  if (inputs.carMileage) {
+  if (inputs.carMileage || 0) {
     emissions.push({
       category: "transport",
       value: inputs.carMileage * 0.2, // 0.2 kg CO2 per km
@@ -118,6 +118,8 @@ const saveEmissions = async (req, res) => {
   try {
     const user_id = req.user?._id || "67a098d79f7f6957cbb2936e"; // Fallback for testing
     const inputs = req.body;
+
+    console.log(req);
 
     // Calculate emissions for each category
     const dailyEmissions = calculateDailyEmissions(inputs, user_id);

@@ -1,10 +1,10 @@
+const Recommendation = require('../models/r');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const {
   DailyEmission,
   MonthlyEmission,
   OnUseEmission,
 } = require("../models/emission");
-const { Recommendation } = require("../models/recommendations");
 require("dotenv").config();
 
 // Initialize Gemini AI
@@ -66,14 +66,18 @@ async function getAIRecommendations(analysisData) {
       Focus on practical, high-impact suggestions based on the user's emission patterns.
       Ensure recommendations are specific to their location and current season.
       Include numerical estimates of potential CO2 reduction.
+
+      Don't add any note just the json 
     `;
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
+    const jsonMatch = responseText.match(/\[.*\]/s);
+    console.log(responseText);
 
     // Parse the JSON response
     try {
-      return JSON.parse(responseText);
+      return JSON.parse(jsonMatch);
     } catch (parseError) {
       console.error("Error parsing Gemini response:", parseError);
       return getBasicRecommendations(analysisData);
@@ -115,12 +119,12 @@ const recommendationController = {
   // Get personalized recommendations
   async getRecommendations(req, res) {
     try {
-      const userId = req.user._id;
+      const userId = req.user?._id || "67a098d79f7f6957cbb2936e"; // add actual id
       const emissionsData = await getUserEmissionsData(userId);
 
       const analysisData = {
         emissions_data: emissionsData,
-        user_location: req.user.city,
+        user_location: req.user?.city || "Vellore", // Add actual city
         current_season: new Date().getMonth(),
       };
 
@@ -176,7 +180,7 @@ const recommendationController = {
   // Get implementation history
   async getImplementationHistory(req, res) {
     try {
-      const userId = req.user._id;
+      const userId = req.user?._id || "67a098d79f7f6957cbb2936e";
 
       const history = await Recommendation.findOne({ user_id: userId })
         .select("recommendations")
