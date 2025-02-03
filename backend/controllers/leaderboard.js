@@ -4,7 +4,7 @@ const {
   OnUseEmission,
 } = require("../models/emission");
 const Leaderboard = require("../models/Leaderboard");
-const User = require("../models/user"); // Assuming you have a User model
+const User = require("../models/User"); // Assuming you have a User model
 
 class LeaderboardService {
   // Calculate emission reduction by comparing with baseline or previous period
