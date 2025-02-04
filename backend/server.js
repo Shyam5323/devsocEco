@@ -10,6 +10,10 @@ const xss = require("xss-clean");
 const userRoutes = require('./routes/userRoutes');
 const recommendRoutes = require("./routes/bestPractices.js");
 const emissionRouter = require("./routes/emission.js");
+const categoryRoutes = require("./routes/categoryRoutes");
+const postRoutes = require("./routes/postRoutes");
+const commentRoutes = require("./routes/commentRoutes");
+const leaderboard = require("./routes/leaderboard.js");
 
 const connectDb = require("./db/connect");
 
@@ -23,7 +27,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/emission", emissionRouter);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/recommendation',recommendRoutes);
-
+app.use("/api/v1/categories", categoryRoutes);
+app.use("/api/v1/posts", postRoutes);
+app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/leaderboard",leaderboard);
 const port = process.env.PORT || 3000;
 
 const start = async () => {
