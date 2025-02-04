@@ -7,7 +7,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require("./routes/userRoutes");
 const recommendRoutes = require("./routes/bestPractices.js");
 const emissionRouter = require("./routes/emission.js");
 
@@ -19,12 +19,11 @@ app.use(xss());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 app.use("/api/v1/emission", emissionRouter);
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/recommendation',recommendRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/recommendation", recommendRoutes);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 const start = async () => {
   try {
