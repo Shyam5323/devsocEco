@@ -13,7 +13,7 @@ const emissionRouter = require("./routes/emission.js");
 const categoryRoutes = require("./routes/categoryRoutes");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
-const leaderboard = require("./routes/leaderboard.js");
+const leaderboardRoutes = require("./routes/leaderboard");
 
 const connectDb = require("./db/connect");
 
@@ -30,9 +30,9 @@ app.use('/api/v1/recommendation',recommendRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
-app.use("/api/v1/leaderboard",leaderboard);
-const port = process.env.PORT || 3000;
+app.use("/api/v1/leaderboard", leaderboardRoutes);
 
+const port = process.env.PORT || 3000;
 const start = async () => {
   try {
     await connectDb(process.env.MONGO_URI);

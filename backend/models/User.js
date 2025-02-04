@@ -24,9 +24,10 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    country: {
+    city: {
         type: String,
         trim: true,
+        default : "Unknown",
         maxlength: 100
     },
     profile_completion_percentage: {
