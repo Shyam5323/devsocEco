@@ -13,7 +13,7 @@ const emissionRouter = require("./routes/emission.js");
 const categoryRoutes = require("./routes/categoryRoutes");
 const postRoutes = require("./routes/postRoutes");
 const commentRoutes = require("./routes/commentRoutes");
-const leaderboard = require("./routes/leaderboard.js");
+const leaderboardRoutes = require("./routes/leaderboard");
 
 const connectDb = require("./db/connect");
 
@@ -29,7 +29,8 @@ app.use("/api/v1/recommendation", recommendRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
-app.use("/api/v1/leaderboard", leaderboard);
+
+app.use("/api/v1/leaderboard", leaderboardRoutes);
 const port = process.env.PORT || 5000;
 
 const start = async () => {
@@ -42,5 +43,4 @@ const start = async () => {
     console.log(error);
   }
 };
-
 start();

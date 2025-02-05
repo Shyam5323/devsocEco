@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password, country } = req.body;
+    const { name, email, password, city, country } = req.body;
 
     let userExists = await User.findOne({ email });
     if (userExists) {
@@ -17,12 +17,7 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create new user
-    const user = new User({
-      name,
-      email,
-      password_hash: hashedPassword,
-      country,
-    });
+    const user = new User({ name, email, password_hash: hashedPassword, city, country });
     await user.save();
 
     // Generate token
@@ -32,22 +27,15 @@ const registerUser = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Return token and user details
+    // Return response without exposing password_hash
     res.status(201).json({
       message: "User registered successfully",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        password_hash: user.password_hash,
-        role: user.role,
-        country: user.country,
-      },
+      user: { id: user._id, name: user.name, email: user.email, role: user.role, city: user.city, country: user.country },
       token,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error registering user:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -59,8 +47,7 @@ const loginUser = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch)
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
       { user_id: user._id, role: user.role },
@@ -73,44 +60,45 @@ const loginUser = async (req, res) => {
 
     res.status(200).json({ message: "Login successful", token });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error logging in:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({}, "-password_hash"); // Exclude password hash
     res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id, "-password_hash"); // Exclude password hash
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error fetching user:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
 
-    if (!updatedUser)
-      return res.status(404).json({ message: "User not found" });
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json({ message: "User updated successfully", updatedUser });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error updating user:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -119,20 +107,13 @@ const deleteUser = async (req, res) => {
     const { id } = req.params;
     const deletedUser = await User.findByIdAndDelete(id);
 
-    if (!deletedUser)
-      return res.status(404).json({ message: "User not found" });
+    if (!deletedUser) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error("Error deleting user:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
-module.exports = {
-  registerUser,
-  loginUser,
-  getUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-};
+module.exports = { registerUser, loginUser, getUsers, getUserById, updateUser, deleteUser };
