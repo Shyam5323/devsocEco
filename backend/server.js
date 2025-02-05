@@ -7,7 +7,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require("./routes/userRoutes");
 const recommendRoutes = require("./routes/bestPractices.js");
 const emissionRouter = require("./routes/emission.js");
 const categoryRoutes = require("./routes/categoryRoutes");
@@ -23,16 +23,16 @@ app.use(xss());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 app.use("/api/v1/emission", emissionRouter);
-app.use('/api/v1/users', userRoutes);
-app.use('/api/v1/recommendation',recommendRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/recommendation", recommendRoutes);
 app.use("/api/v1/categories", categoryRoutes);
 app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/comments", commentRoutes);
-app.use("/api/v1/leaderboard", leaderboardRoutes);
 
-const port = process.env.PORT || 3000;
+app.use("/api/v1/leaderboard", leaderboardRoutes);
+const port = process.env.PORT || 5000;
+
 const start = async () => {
   try {
     await connectDb(process.env.MONGO_URI);
@@ -43,5 +43,4 @@ const start = async () => {
     console.log(error);
   }
 };
-
 start();

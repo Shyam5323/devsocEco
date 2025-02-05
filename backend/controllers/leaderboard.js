@@ -77,9 +77,9 @@ const getLeaderboard = async (req, res) => {
 
         // Calculate total emissions
         const totalEmissions = (
-          (dailyTotal[0]?.total || 0) +
-          (monthlyTotal[0]?.total || 0) +
-          (onUseTotal[0]?.total || 0)
+          (dailyTotal[0].total || 0) +
+          (monthlyTotal[0].total || 0) +
+          (onUseTotal[0].total || 0)
         );
         console.log(totalEmissions);
 
