@@ -9,7 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
+
+    "bootstrap": "^5.3.3",
+
+=======
     "@radix-ui/react-label": "^2.1.1",
+>>>>>>> 445a9bda5ff9da4ecd83019ae0c60442d49e5a3f
     "@radix-ui/react-slot": "^1.1.1",
     "@tailwindcss/typography": "^0.5.16",
     "axios": "^1.7.9",
