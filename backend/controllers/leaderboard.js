@@ -1,167 +1,123 @@
-const {
-  DailyEmission,
-  MonthlyEmission,
-  OnUseEmission,
-} = require("../models/emission");
-const Leaderboard = require("../models/Leaderboard");
+const { DailyEmission, MonthlyEmission, OnUseEmission } = require("../models/emission");
 const User = require("../models/User"); // Assuming you have a User model
 
-class LeaderboardService {
-  // Calculate emission reduction by comparing with baseline or previous period
-  static async calculateEmissionReduction(userId, startDate, endDate) {
-    // Get all emissions for the period
-    const [dailyEmissions, monthlyEmissions, onUseEmissions] =
-      await Promise.all([
-        DailyEmission.find({
-          user_id: userId,
-          date: { $gte: startDate, $lte: endDate },
-        }),
-        MonthlyEmission.find({
-          user_id: userId,
-          month: { $gte: startDate, $lte: endDate },
-        }),
-        OnUseEmission.find({
-          user_id: userId,
-          timestamp: { $gte: startDate, $lte: endDate },
-        }),
-      ]);
-
-    // Calculate baseline (example: average emissions from previous period)
-    const previousPeriodStart = new Date(startDate);
-    previousPeriodStart.setMonth(previousPeriodStart.getMonth() - 1);
-
-    const [prevDailyEmissions, prevMonthlyEmissions, prevOnUseEmissions] =
-      await Promise.all([
-        DailyEmission.find({
-          user_id: userId,
-          date: { $gte: previousPeriodStart, $lt: startDate },
-        }),
-        MonthlyEmission.find({
-          user_id: userId,
-          month: { $gte: previousPeriodStart, $lt: startDate },
-        }),
-        OnUseEmission.find({
-          user_id: userId,
-          timestamp: { $gte: previousPeriodStart, $lt: startDate },
-        }),
-      ]);
-
-    // Calculate total emissions for current and previous period
-    const currentEmissions = this.sumEmissions(
-      dailyEmissions,
-      monthlyEmissions,
-      onUseEmissions
-    );
-    const previousEmissions = this.sumEmissions(
-      prevDailyEmissions,
-      prevMonthlyEmissions,
-      prevOnUseEmissions
-    );
-
-    // Return the reduction (positive if emissions decreased)
-    return previousEmissions - currentEmissions;
-  }
-
-  static sumEmissions(daily, monthly, onUse) {
-    const dailySum = daily.reduce((sum, emission) => sum + emission.value, 0);
-    const monthlySum = monthly.reduce(
-      (sum, emission) => sum + emission.value,
-      0
-    );
-    const onUseSum = onUse.reduce((sum, emission) => sum + emission.value, 0);
-    return dailySum + monthlySum + onUseSum;
-  }
-
-  // Update leaderboard after new emissions are saved
-  static async updateLeaderboard(userId) {
-    try {
-      // Get user's city and group information
-      const user = await User.findById(userId);
-      if (!user || !user.city || !user.group) {
-        throw new Error("User, city, or group information not found");
-      }
-
-      // Calculate emission reduction for the last 30 days
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - 30);
-
-      const reductionAmount = await this.calculateEmissionReduction(
-        userId,
-        startDate,
-        endDate
-      );
-
-      // Update leaderboard with the new reduction
-      await Leaderboard.updateUserEmissionReduction(
-        userId,
-        user.city,
-        user.group,
-        reductionAmount
-      );
-
-      // Check and assign achievements
-      await this.checkAndAssignAchievements(userId, user.city, user.group);
-    } catch (error) {
-      console.error("Error updating leaderboard:", error);
-      throw error;
-    }
-  }
-
-  // Check and assign achievements based on performance
-  static async checkAndAssignAchievements(userId, city, group) {
-    const leaderboardEntry = await Leaderboard.findOne({
-      user_id: userId,
-      city,
-      group,
-    });
-    const achievements = [];
-
-    // Check for weekly champion
-    const topWeeklyPerformer = await Leaderboard.findOne({ city, group }).sort({
-      total_emission_reduction: -1,
-    });
-
-    if (topWeeklyPerformer?.user_id.toString() === userId) {
-      achievements.push("weekly_champion");
-    }
-
-    // Check for consistent reducer (reduced emissions for 3 consecutive weeks)
-    const threeWeeksAgo = new Date();
-    threeWeeksAgo.setDate(threeWeeksAgo.getDate() - 21);
-
-    const consistentReduction = await this.calculateEmissionReduction(
-      userId,
-      threeWeeksAgo,
-      new Date()
-    );
-
-    if (consistentReduction > 0) {
-      achievements.push("consistent_reducer");
-    }
-
-    // Update achievements if any new ones earned
-    if (achievements.length > 0) {
-      await Leaderboard.findByIdAndUpdate(leaderboardEntry._id, {
-        $addToSet: { achievements: { $each: achievements } },
-      });
-    }
-  }
-}
-
-// Middleware to update leaderboard after saving emissions
-async function updateLeaderboardMiddleware(next) {
+const getLeaderboard = async (req, res) => {
   try {
-    await LeaderboardService.updateLeaderboard(this.user_id);
+    const { country, city, timeframe = 'month' } = req.query;
+    const currentDate = new Date();
+    
+    // Define date range based on timeframe
+    let startDate;
+    if (timeframe === 'week') {
+      startDate = new Date(currentDate.setDate(currentDate.getDate() - 7));
+    } else if (timeframe === 'month') {
+      startDate = new Date(currentDate.setMonth(currentDate.getMonth() - 1));
+    } else if (timeframe === 'year') {
+      startDate = new Date(currentDate.setFullYear(currentDate.getFullYear() - 1));
+    }
+
+    // Create location filter for users
+    const locationFilter = {};
+    if (country) locationFilter.country = country;
+    if (city) locationFilter.city = city;
+
+    // Get eligible users based on location
+    const users = await User.find(locationFilter).select('_id name country city');
+
+    // Aggregate emissions for each user
+    const userEmissions = await Promise.all(
+      users.map(async (user) => {
+        // Get daily emissions
+        const dailyTotal = await DailyEmission.aggregate([
+          {
+            $match: {
+              user_id: user._id,
+              date: { $gte: startDate }
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$value" }
+            }
+          }
+        ]);
+
+        // Get monthly emissions
+        const monthlyTotal = await MonthlyEmission.aggregate([
+          {
+            $match: {
+              user_id: user._id,
+              month: { $gte: startDate }
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$value" }
+            }
+          }
+        ]);
+
+        // Get on-use emissions
+        const onUseTotal = await OnUseEmission.aggregate([
+          {
+            $match: {
+              user_id: user._id,
+              timestamp: { $gte: startDate }
+            }
+          },
+          {
+            $group: {
+              _id: null,
+              total: { $sum: "$value" }
+            }
+          }
+        ]);
+
+        // Calculate total emissions
+        const totalEmissions = (
+          (dailyTotal[0]?.total || 0) +
+          (monthlyTotal[0]?.total || 0) +
+          (onUseTotal[0]?.total || 0)
+        );
+        console.log(totalEmissions);
+
+        return {
+          user: {
+            id: user._id,
+            name: user.name,
+            country: user.country,
+            city: user.city
+          },
+          totalEmissions,
+          timeframe
+        };
+      })
+    );
+
+    // Sort users by total emissions (ascending - lower is better)
+    const sortedLeaderboard = userEmissions
+      .sort((a, b) => a.totalEmissions - b.totalEmissions)
+      .map((entry, index) => ({
+        ...entry,
+        rank: index + 1
+      }));
+
+    res.status(200).json({
+      message: "Leaderboard retrieved successfully",
+      timeframe,
+      filters: { country, city },
+      leaderboard: sortedLeaderboard
+    });
+
   } catch (error) {
-    console.error("Error in leaderboard middleware:", error);
+    console.error("Error retrieving leaderboard:", error);
+    res.status(500).json({
+      message: "Error retrieving leaderboard",
+      error: error.message
+    });
   }
-  next();
-}
+};
 
-// Add middleware to emission models
-DailyEmission.post("save", updateLeaderboardMiddleware);
-MonthlyEmission.post("save", updateLeaderboardMiddleware);
-OnUseEmission.post("save", updateLeaderboardMiddleware);
-
-module.exports = LeaderboardService;
+module.exports = { getLeaderboard };
