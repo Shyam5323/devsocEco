@@ -1,0 +1,130 @@
+/* .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #f0f0f0;
+  display: flex;
+}
+
+.box1 {
+  width: 200px;
+  height: 200px;
+  background-color: #2a732c;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  padding: 2%;
+  margin: 2%;
+}
+
+.box2 {
+  width: 400px;
+  height: 200px;
+  background-color: #68de6c;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  padding: 2%;
+  margin: 2%;
+}
+
+.box3 {
+  width: 300px;
+  height: 200px;
+  background-color: #000000;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  padding: 2%;
+  margin: 2%;
+} */
+
+/* abc.module.css */
+
+/* General container for sections */
+/* General container for sections */
+.container {
+  display: flex;
+  flex-direction: row; /* Set items to be displayed horizontally */
+  justify-content: space-between; /* Space between items */
+  gap: 2rem; /* Adds spacing between the sections */
+  margin-bottom: 2rem;
+}
+
+/* Each individual container for boxes */
+.con1,
+.con2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem;
+  gap: 1rem; /* Adds spacing between the boxes */
+  width: 48%; /* Adjusted width to make sure both fit side by side */
+}
+
+/* The box styling, which is common across all */
+.box1,
+.box2,
+.box3 {
+  background-color: white;
+  padding: 1.5rem; /* Increased padding for better spacing */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Make sure it scales across different screen sizes */
+  max-width: 500px; /* Limit max-width for better layout control */
+  text-align: center;
+}
+
+/* Color specific to each box */
+.box1 {
+  background-color: #f0f8ff;
+}
+
+.box2 {
+  background-color: #f5f5f5;
+}
+
+.box3 {
+  background-color: #e0f7fa;
+}
+
+/* Header styling for all h3 elements inside boxes */
+.header {
+  margin-bottom: 1rem;
+  font-size: 1.4rem; /* Increased font size for better visibility */
+  color: #333;
+}
+
+/* Styling for the list of recommendations */
+.recommendationsList,
+.reportsList {
+  list-style-type: none;
+  padding: 0;
+  margin: 1rem 0;
+  font-size: 1rem;
+}
+
+.recommendationItem,
+.reportItem {
+  margin: 0.5rem 0;
+  background-color: #f5f5f5;
+  padding: 0.5rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
