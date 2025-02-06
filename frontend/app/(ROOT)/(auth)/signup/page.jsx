@@ -1,27 +1,7 @@
 import React from "react";
 import SignUpForm from "@/components/SignUpForm";
-import { redirect } from "next/navigation";
 
 const SignUpWrapper = () => {
-  const handleSignUpSuccess = async (token) => {
-    try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      });
-
-      if (response.ok) {
-        redirect("/dashboard");
-      } else {
-        console.error("Failed to set token");
-      }
-    } catch (error) {
-      console.error("Signup error:", error);
-    }
-  };
 
   return (
     <div className="bg-secondary h-screen flex items-center justify-center">
