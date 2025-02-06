@@ -13,7 +13,8 @@ const Navbar = () => {
           await signIn("google");
         }}
       >
-        <Button type="submit">Signin with Google</Button>
+        <Button type="submit" >Sign Up</Button>
+        {/* <Button type="submit">Signin with Google</Button> */}
       </form>
     </section>
   );

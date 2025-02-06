@@ -13,11 +13,9 @@ const registerUser = async (req, res) => {
     }
 
     // Hash the password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create new user
-    const user = new User({ name, email, password_hash: hashedPassword, city, country });
+    const user = new User({ name, email, password_hash: password, city, country });
     await user.save();
 
     // Generate token
@@ -47,6 +45,8 @@ const loginUser = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
+    console.log(password);
+    console.log(user.password_hash);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
