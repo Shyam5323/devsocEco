@@ -37,10 +37,6 @@ export default function LoginForm() {
 
   return (
     <Card className="w-full max-w-lg mx-auto">
-      <CardHeader>
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Please enter your credentials below</CardDescription>
-      </CardHeader>
       <CardContent>
         <form action={action} className="space-y-6" autoComplete="on">
           <div className="space-y-4">
