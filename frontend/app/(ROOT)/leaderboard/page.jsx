@@ -1,25 +1,4 @@
-// import Navbar from "@/components/Navbar";
-// import styles from "./abc.module.css"; // Import the renamed CSS module
-
-// export default function Home() {
-//   return (
-//     <div className="relative">
-//       <Navbar />
-//       <div className={styles.container}>
-//         <div className={styles.box1}>Streak 15 DAYS</div>
-//         <div className={styles.box3}>Recommendations</div>
-//         <div className={styles.box2}>Carbon-prints Generated</div>
-//       </div>
-//       <div className={styles.container}>
-//         <div className={styles.box2}>Green Footprints</div>
-//         <div className={styles.box1}>Today you saved 3kg CO2e</div>
-//         <div className={styles.box3}>Daily reports</div>
-//       </div>
-//     </div>
-//   );
-// }
-
-import Navbar from "@/components/Navbar";
+import NavbarLI from "@/components/NavbarLogedIn";
 import styles from "./abc.module.css"; // Import the renamed CSS module
 
 export default function Home() {
@@ -35,8 +14,8 @@ export default function Home() {
   const dailyReports = ["Report 1", "Report 2", "Report 3"];
 
   return (
-    <div className="relative">
-      <Navbar />
+    <div className="relative max-w-full  ">
+      <NavbarLI />
 
       {/* Streak, Carbon Footprint, and CO2 Saved Today Sections */}
       <div className={styles.container}>
@@ -65,7 +44,7 @@ export default function Home() {
         {/* Recommendations Section */}
         <div className={styles.con2}>
           <div className={styles.box3}>
-            <h3 className={styles.header}>Recommendations</h3>
+            <h3 className={styles.header}>Top 3 recommendations</h3>
             <ul className={styles.recommendationsList}>
               {recommendations.map((recommendation, index) => (
                 <li key={index} className={styles.recommendationItem}>
