@@ -4,7 +4,7 @@ const router = express.Router();
 const recommendationController = require("../controllers/recommendations");
 router.get("/", recommendationController.getRecommendations);
 router.post(
-  "/:recommendationId/implement",
+  "/implement/:recommendationId",
   recommendationController.markImplemented
 );
 router.get(
