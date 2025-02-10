@@ -20,7 +20,7 @@ const leaderboardRoutes = require("./routes/leaderboard");
 const connectDb = require("./db/connect");
 
 app.use(helmet());
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors({ origin: "http://localhost:5000", credentials: true }));
 app.use(xss());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

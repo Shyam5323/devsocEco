@@ -39,7 +39,6 @@ export default function RecommendationsPage() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["recommendations"]);
       queryClient.invalidateQueries(["history"]);
     },
   });

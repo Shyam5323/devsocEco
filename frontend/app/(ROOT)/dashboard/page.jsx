@@ -1,20 +1,16 @@
 import NavbarLI from "@/components/NavbarLogedIn";
 import styles from "./abc.module.css"; // Import the renamed CSS module
 
-export default function Home() {
+function Home() {
   // Sample data to populate the values dynamically (this could come from an API or state)
   const streakDays = 15;
-  const recommendations = [
-    "Recommendation 1",
-    "Recommendation 2",
-    "Recommendation 3",
-  ];
+  const recommendations = ["Recommendation 1", "Recommendation 2", "Recommendation 3"];
   const carbonFootprint = 10; // in kg CO2e
   const co2SavedToday = 3; // in kg CO2e
   const dailyReports = ["Report 1", "Report 2", "Report 3"];
 
   return (
-    <div className="relative max-w-full  ">
+    <div className="relative max-w-full">
       <NavbarLI />
 
       {/* Streak, Carbon Footprint, and CO2 Saved Today Sections */}
@@ -71,3 +67,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home; // ✅ Protect the Home page with authentication

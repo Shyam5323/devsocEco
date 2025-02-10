@@ -6,25 +6,26 @@ import Link from "next/link";
 
 const NavbarLI = () => {
   return (
-    <section className="navbar flex flex-row justify-between items-center p-2 gap-x-5 w-full">
-      <Image src={"/logo.png"} alt="logo" width={100} height={100} />
-      <form
-        className="flex gap-4 w-full px-2" // Add padding on both sides
-      >
-        
-        <div className="max-w-7xl mx-auto flex items-center p-4 space-x-4">
-        <Link href="/">
-          <Button type="submit" className = "flex-1 flex justify-start ">Home</Button>
+    <nav className="navbar flex items-center p-2 gap-x-5 w-full bg-white shadow-md">
+      {/* Logo */}
+      <Image src="/logo.png" alt="logo" width={100} height={100} />
+
+      {/* Button Container - Full Width */}
+      <div className="flex w-full gap-4 px-2">
+        <Link href="/" className="flex-1">
+          <Button className="w-full">Home</Button>
         </Link>
-        <Link href="/leaderboard">
-          <Button type="submit" className = "flex-1 flex justify-start">LeaderBoard</Button>
+        <Link href="/leaderboard" className="flex-1">
+          <Button className="w-full">Leaderboard</Button>
         </Link>
-        <Link href="/dashboard">
-          <Button type="submit" className = "flex-1 flex justify-start">Dashboard</Button>
+        <Link href="/dashboard" className="flex-1">
+          <Button className="w-full">Dashboard</Button>
         </Link>
-        </div>
-      </form>
-    </section>
+        <Link href="/login" className="flex-1">
+          <Button className="w-full">Log Out</Button>
+        </Link>
+      </div>
+    </nav>
   );
 };
 
