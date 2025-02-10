@@ -2,29 +2,30 @@ import React from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "@/auth";
+import Link from "next/link";
 
 const NavbarLI = () => {
   return (
-    <section className="navbar flex flex-row justify-between items-center p-2 gap-x-5 w-full">
-      <Image src={"/logo.png"} alt="logo" width={100} height={100} />
-      <form
-        action={async () => {
-          "use server";
-          await signIn("google");
-        }}
-        className="flex gap-4 w-full px-2" // Add padding on both sides
-      >
-        <Button type="submit" className="flex-1">
-          Home
-        </Button>
-        <Button type="submit" className="flex-1">
-          Leaderboard
-        </Button>
-        <Button type="submit" className="flex-1">
-          Dashboard
-        </Button>
-      </form>
-    </section>
+    <nav className="navbar flex items-center p-2 gap-x-5 w-full bg-white shadow-md">
+      {/* Logo */}
+      <Image src="/logo.png" alt="logo" width={100} height={100} />
+
+      {/* Button Container - Full Width */}
+      <div className="flex w-full gap-4 px-2">
+        <Link href="/" className="flex-1">
+          <Button className="w-full">Home</Button>
+        </Link>
+        <Link href="/leaderboard" className="flex-1">
+          <Button className="w-full">Leaderboard</Button>
+        </Link>
+        <Link href="/dashboard" className="flex-1">
+          <Button className="w-full">Dashboard</Button>
+        </Link>
+        <Link href="/login" className="flex-1">
+          <Button className="w-full">Log Out</Button>
+        </Link>
+      </div>
+    </nav>
   );
 };
 

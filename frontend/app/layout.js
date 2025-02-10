@@ -1,5 +1,7 @@
 import localFont from "next/font/local";
+import QueryProvider from "@/app/(ROOT)/bestpractices/QueryProvider";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
 
 const workSans = localFont({
   src: [
@@ -25,7 +27,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={workSans.variable}>{children}</body>
+      <body className={workSans.variable}>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+      </body>
     </html>
   );
 }

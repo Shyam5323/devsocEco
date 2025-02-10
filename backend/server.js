@@ -1,6 +1,8 @@
 require("dotenv").config();
 require("express-async-errors");
 
+
+
 const express = require("express");
 const app = express();
 const helmet = require("helmet");
@@ -18,7 +20,7 @@ const leaderboardRoutes = require("./routes/leaderboard");
 const connectDb = require("./db/connect");
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5000", credentials: true }));
 app.use(xss());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

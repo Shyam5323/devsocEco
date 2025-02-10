@@ -151,32 +151,33 @@ const recommendationController = {
   // Mark recommendation as implemented
   async markImplemented(req, res) {
     try {
-      const { recommendationId } = req.params;
-      const userId = req.user._id;
-
-      const result = await Recommendation.findOneAndUpdate(
-        {
-          user_id: userId,
-          "recommendations._id": recommendationId,
-        },
-        {
-          $set: {
-            "recommendations.$.implemented": true,
-          },
-        },
-        { new: true }
-      );
-
-      if (!result) {
-        return res.status(404).json({ error: "Recommendation not found" });
+      const userId = req.user.id;  // Get userId from authentication token
+  
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
       }
-
-      res.json(result);
+  
+      const recommendationId = req.params.id;
+      const recommendation = await Recommendation.findById(recommendationId);
+      if (!recommendation) {
+        return res.status(404).json({ message: "Recommendation not found" });
+      }
+  
+      await ImplementedRecommendation.create({
+        userId,
+        category: recommendation.category,
+        suggestion: recommendation.suggestion,
+        potential_impact: recommendation.potential_impact,
+        implementedAt: new Date(),
+      });
+  
+      await Recommendation.findByIdAndDelete(recommendationId);
+      res.status(200).json({ message: "Marked as implemented" });
     } catch (error) {
-      res.status(500).json({ error: "Failed to update recommendation" });
+      res.status(500).json({ message: "Server error", error });
     }
   },
-
+  
   // Get implementation history
   async getImplementationHistory(req, res) {
     try {
