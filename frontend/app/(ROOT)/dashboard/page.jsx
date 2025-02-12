@@ -1,8 +1,16 @@
 import NavbarLI from "@/components/NavbarLogedIn";
-import styles from "./abc.module.css"; // Import the renamed CSS module
+import styles from "./abc.module.css";
+import { cookies } from "next/headers";
+import { redirect} from "next/navigation";
 
-function Home() {
+async function Home() {
   // Sample data to populate the values dynamically (this could come from an API or state)
+  const cookiestore = await cookies();
+  const token = cookiestore.get('auth_token');
+  console.log(token);
+  if(!token){
+    redirect('/login');
+  }
   const streakDays = 15;
   const recommendations = ["Recommendation 1", "Recommendation 2", "Recommendation 3"];
   const carbonFootprint = 10; // in kg CO2e

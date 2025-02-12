@@ -1,11 +1,27 @@
 'use client';
-
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import NavbarLogIn from "@/components/NavbarLogedIn";
+import Cookies from "js-cookie";
+import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
 
 export default function RecommendationsPage() {
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = Cookies.get("auth_token");
+    console.log("Token from cookies:", token);
+
+    if (!token) {
+      router.replace("/login"); 
+    } else {
+      setIsAuthenticated(true); 
+    }
+  }, [router]);
+  
   const queryClient = useQueryClient();
   const [tab, setTab] = useState('recommendations');
 
@@ -43,9 +59,6 @@ export default function RecommendationsPage() {
     },
   });
   
-  
-  
-
   return (
     <div>
     <NavbarLogIn/>

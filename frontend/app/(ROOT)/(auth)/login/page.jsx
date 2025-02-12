@@ -12,14 +12,15 @@ const LoginPage = () => {
 
   const handleLogin = async (email, password) => {
     try {
-      const response = await axios.post("http://localhost:5000/api/v1/auth/login", {
+      const response = await axios.post("http://localhost:5000/api/v1/users/login", {
         email,
         password,
       });
 
       const { token } = response.data;
+      console.log(token)
       if (token) {
-        Cookies.set("token", token, { expires: 7, path: "/" }); // Store token in cookies (valid for 7 days)
+        Cookies.set("auth_token", token, { expires: 7, path: "/" }); // Store token in cookies (valid for 7 days)
         router.push("/dashboard"); // Redirect to dashboard after login
       } else {
         setError("Invalid credentials. Please try again.");
