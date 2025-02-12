@@ -42,17 +42,13 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
-      { userId: user._id, role: user.role }, // Ensure correct payload format
+      { user_id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -60,12 +56,21 @@ const loginUser = async (req, res) => {
     user.last_login = new Date();
     await user.save();
 
-    res.status(200).json({ message: "Login successful", token });
+    // ✅ Store token in HTTP-only cookie
+    res.cookie("token", token, {
+      httpOnly: true, // Prevents JavaScript access
+      secure: process.env.NODE_ENV === "production", // Secure in production
+      sameSite: "Strict",
+      maxAge: 3600000, // 1 hour
+    });
+
+    res.status(200).json({ message: "Login successful" ,token : token});
   } catch (error) {
     console.error("Error logging in:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 const getUsers = async (req, res) => {
   try {

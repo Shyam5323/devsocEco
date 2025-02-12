@@ -9,6 +9,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const xss = require("xss-clean");
 
+const auth = require("./middleware/authentication");
 const userRoutes = require("./routes/userRoutes");
 const recommendRoutes = require("./routes/bestPractices.js");
 const emissionRouter = require("./routes/emission.js");
@@ -20,17 +21,17 @@ const leaderboardRoutes = require("./routes/leaderboard");
 const connectDb = require("./db/connect");
 
 app.use(helmet());
-app.use(cors({ origin: "http://localhost:5000", credentials: true }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(xss());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1/emission", emissionRouter);
+app.use("/api/v1/emission",auth, emissionRouter);
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/recommendation", recommendRoutes);
-app.use("/api/v1/categories", categoryRoutes);
-app.use("/api/v1/posts", postRoutes);
-app.use("/api/v1/comments", commentRoutes);
+app.use("/api/v1/recommendation",recommendRoutes);
+app.use("/api/v1/categories",auth, categoryRoutes);
+app.use("/api/v1/posts", auth,postRoutes);
+app.use("/api/v1/comments",auth, commentRoutes);
 
 app.use("/api/v1/leaderboard", leaderboardRoutes);
 const port = process.env.PORT || 5000;

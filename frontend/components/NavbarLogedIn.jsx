@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import Image from "next/image";
 import { signIn, signOut, useSession } from "@/auth";
 import Link from "next/link";
+import LogoutButton from "./LogoutButton";
 
 const NavbarLI = () => {
   return (
@@ -21,9 +22,7 @@ const NavbarLI = () => {
         <Link href="/dashboard" className="flex-1">
           <Button className="w-full">Dashboard</Button>
         </Link>
-        <Link href="/login" className="flex-1">
-          <Button className="w-full">Log Out</Button>
-        </Link>
+        <LogoutButton/>
       </div>
     </nav>
   );

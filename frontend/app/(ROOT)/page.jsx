@@ -2,6 +2,7 @@ import { signIn } from "@/auth";
 import Carousel from "@/components/Carousel";
 import Navbar from "@/components/Navbar";
 
+
 const slides = [
   "./homeSlide1.jpg",
   "./homeSlide1.jpg",
@@ -13,6 +14,7 @@ const slides = [
 import Image from "next/image";
 
 export default function Home() {
+
   return (
     <div className="relative">
       <Navbar />
